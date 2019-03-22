@@ -27,8 +27,18 @@ namespace SquarePuzzleGame_SchoolProject
         private void Ok_Button_Click(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = Owner as MainWindow;
-            mainWindow.PlayerName = nameTextBox.Text;
-            // TODO string control
+            string playerName = nameTextBox.Text;
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                MessageBox.Show("Lütfen ismi boş bırakmayınız.");
+                return;
+            }
+            if (playerName.Any(ch => char.IsSeparator(ch)))
+            {
+                MessageBox.Show("Lütfen ismin için herhangi bir boşluk bırakmayınız.");
+                return;
+            }
+            mainWindow.PlayerName = playerName;
             DialogResult = true;
             Close();
         }

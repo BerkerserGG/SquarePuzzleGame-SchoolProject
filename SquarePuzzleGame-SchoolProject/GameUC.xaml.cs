@@ -27,13 +27,18 @@ namespace SquarePuzzleGame_SchoolProject
         private Button[] puzzleButtons = new Button[16];
         private int? selectedPiece = null;
         private int trueCount = 0;
-        public string PlayerName { get; set; }
+        private int maxMove;
+        private int moveCount = 0;
+        public ObservableCollection<string> PlayerName { get; set; }
         public string PuzzleImageURL { get; set; }
         public ObservableCollection<ImageBrush> Brushes { get; set; }
+        public ObservableCollection<double> Score { get; set; }
         public GameUC()
         {
             InitializeComponent();
             Brushes = new ObservableCollection<ImageBrush>();
+            PlayerName = new ObservableCollection<string>();
+            Score = new ObservableCollection<double>();
             puzzleButtons[0] = PieceBUtton0;
             puzzleButtons[1] = PieceBUtton1;
             puzzleButtons[2] = PieceBUtton2;
@@ -74,7 +79,20 @@ namespace SquarePuzzleGame_SchoolProject
             {
                 Button randomButton = sender as Button;
                 randomButton.IsEnabled = false;
+                StartScore();
             }
+            else
+            {
+                foreach (var button in puzzleButtons)
+                {
+                    button.IsEnabled = false;
+                }
+            }
+        }
+        private void StartScore()
+        {
+            maxMove = 15 - trueCount;
+            Score.Add(trueCount * 6.25);
         }
         private bool RandomControl()
         {
@@ -88,15 +106,7 @@ namespace SquarePuzzleGame_SchoolProject
                     puzzleButtons[i].IsEnabled = false;
                 }
             }
-            if (isTruePiece)
-            {
-                return isTruePiece;
-            }
-            else
-            {
-                trueCount = 0;
-                return isTruePiece;
-            }
+            return isTruePiece;
         }
         private void PreparePuzzlePieces()
         {
@@ -173,18 +183,36 @@ namespace SquarePuzzleGame_SchoolProject
             int newSelectedPiece = int.Parse(button.Tag.ToString());
             if (selectedPiece.HasValue)
             {
+                if(newSelectedPiece == selectedPiece.Value)
+                {
+                    selectedPiece = null;
+                    return;
+                }
                 var puzzlePiece = puzzlePieces[newSelectedPiece];
                 puzzlePieces[newSelectedPiece] = puzzlePieces[selectedPiece.Value];
                 puzzlePieces[selectedPiece.Value] = puzzlePiece;
                 Brushes[selectedPiece.Value] = GetImageBrush(puzzlePieces[selectedPiece.Value]);
                 Brushes[newSelectedPiece] = GetImageBrush(puzzlePieces[newSelectedPiece]);
+                bool isMistake = true;
                 if(IsSameImage(originalPuzzlePieces[newSelectedPiece], puzzlePieces[newSelectedPiece]))
                 {
+                    isMistake = false;
                     puzzleButtons[newSelectedPiece].IsEnabled = false;
+                    Score[0] += 6.25;
                 }
                 if (IsSameImage(originalPuzzlePieces[selectedPiece.Value], puzzlePieces[selectedPiece.Value]))
                 {
+                    isMistake = false;
                     puzzleButtons[selectedPiece.Value].IsEnabled = false;
+                    Score[0] += 6.25;
+                }
+                if (isMistake)
+                {
+                    Score[0] -= 12.5;
+                }
+                if(++moveCount > maxMove)
+                {
+                    Score[0] -= 6.25;
                 }
                 selectedPiece = null;
             }

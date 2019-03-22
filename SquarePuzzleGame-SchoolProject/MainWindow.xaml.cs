@@ -36,7 +36,7 @@ namespace SquarePuzzleGame_SchoolProject
         private void OpenGameUC()
         {
             GameUC gameUC = new GameUC();
-            gameUC.PlayerName = PlayerName;
+            gameUC.PlayerName.Add(PlayerName);
             gameUC.PuzzleImageURL = PuzzleImageURL;
             MainContent.Content = gameUC;
         }
