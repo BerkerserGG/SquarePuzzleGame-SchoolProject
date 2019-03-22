@@ -26,6 +26,7 @@ namespace SquarePuzzleGame_SchoolProject
         private BitmapSource[] puzzlePieces = new BitmapSource[16];
         private Button[] puzzleButtons = new Button[16];
         private int? selectedPiece = null;
+        private int trueCount = 0;
         public string PlayerName { get; set; }
         public string PuzzleImageURL { get; set; }
         public ObservableCollection<ImageBrush> Brushes { get; set; }
@@ -65,7 +66,37 @@ namespace SquarePuzzleGame_SchoolProject
                 Brushes.Clear();
                 RandomizePieces();
             }
-            
+            foreach (var button in puzzleButtons)
+            {
+                button.IsEnabled = true;
+            }
+            if (RandomControl())
+            {
+                Button randomButton = sender as Button;
+                randomButton.IsEnabled = false;
+            }
+        }
+        private bool RandomControl()
+        {
+            bool isTruePiece = false;
+            for (int i = 0; i < 16; i++)
+            {
+                if(IsSameImage(originalPuzzlePieces[i], puzzlePieces[i]))
+                {
+                    isTruePiece = true;
+                    trueCount++;
+                    puzzleButtons[i].IsEnabled = false;
+                }
+            }
+            if (isTruePiece)
+            {
+                return isTruePiece;
+            }
+            else
+            {
+                trueCount = 0;
+                return isTruePiece;
+            }
         }
         private void PreparePuzzlePieces()
         {
