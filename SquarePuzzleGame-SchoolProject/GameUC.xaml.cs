@@ -147,6 +147,14 @@ namespace SquarePuzzleGame_SchoolProject
                 puzzlePieces[selectedPiece.Value] = puzzlePiece;
                 Brushes[selectedPiece.Value] = GetImageBrush(puzzlePieces[selectedPiece.Value]);
                 Brushes[newSelectedPiece] = GetImageBrush(puzzlePieces[newSelectedPiece]);
+                if(IsSameImage(originalPuzzlePieces[newSelectedPiece], puzzlePieces[newSelectedPiece]))
+                {
+                    puzzleButtons[newSelectedPiece].IsEnabled = false;
+                }
+                if (IsSameImage(originalPuzzlePieces[selectedPiece.Value], puzzlePieces[selectedPiece.Value]))
+                {
+                    puzzleButtons[selectedPiece.Value].IsEnabled = false;
+                }
                 selectedPiece = null;
             }
             else
