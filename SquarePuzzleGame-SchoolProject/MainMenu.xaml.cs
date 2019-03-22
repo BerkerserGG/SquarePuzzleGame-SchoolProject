@@ -22,6 +22,7 @@ namespace SquarePuzzleGame_SchoolProject
     public partial class MainMenu : UserControl
     {
         public event CreateNewGame NewGameEvent;
+        public event ShowBestScore BestScoreEvent;
         public MainMenu()
         {
             InitializeComponent();
@@ -47,6 +48,11 @@ namespace SquarePuzzleGame_SchoolProject
                     NewGameEvent();
                 }
             }
+        }
+
+        private void BestScore_Button_Click(object sender, RoutedEventArgs e)
+        {
+            BestScoreEvent();
         }
     }
 }

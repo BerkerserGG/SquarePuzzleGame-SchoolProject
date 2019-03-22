@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace SquarePuzzleGame_SchoolProject
         public string PuzzleImageURL { get; set; }
         public ObservableCollection<ImageBrush> Brushes { get; set; }
         public ObservableCollection<double> Score { get; set; }
+        public event ReturnMainMenu EndGameEvent;
         public GameUC()
         {
             InitializeComponent();
@@ -80,12 +82,51 @@ namespace SquarePuzzleGame_SchoolProject
                 Button randomButton = sender as Button;
                 randomButton.IsEnabled = false;
                 StartScore();
+                WinCondition();
             }
             else
             {
                 foreach (var button in puzzleButtons)
                 {
                     button.IsEnabled = false;
+                }
+            }
+        }
+        private void WinCondition()
+        {
+            if(trueCount == 16)
+            {
+                MessageBox.Show("Kazandınız");
+                EndGame();
+                EndGameEvent();
+            }
+        }
+        private void EndGame()
+        {
+            List<PlayerScore> scoreList = new List<PlayerScore>();
+            using(FileStream fs = new FileStream("enyüksekskor.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            {
+                using(StreamReader sr = new StreamReader(fs, Encoding.UTF8))
+                {
+                    string line;
+                    while((line = sr.ReadLine()) != null)
+                    {
+                        string[] data = line.Split(' ');
+                        scoreList.Add(new PlayerScore(data[0], double.Parse(data[1])));
+                    }
+                }
+                scoreList.Add(new PlayerScore(PlayerName[0], Score[0]));
+            }
+            using (FileStream fs = new FileStream("enyüksekskor.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            {
+                using (StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    List<PlayerScore> sortedScoreList = scoreList.OrderByDescending(obj => obj.Score).ToList();
+                    foreach (var item in sortedScoreList)
+                    {
+                        string line = item.PlayerName + " " + item.Score;
+                        sw.WriteLine(line);
+                    }
                 }
             }
         }
@@ -199,12 +240,14 @@ namespace SquarePuzzleGame_SchoolProject
                     isMistake = false;
                     puzzleButtons[newSelectedPiece].IsEnabled = false;
                     Score[0] += 6.25;
+                    trueCount++;
                 }
                 if (IsSameImage(originalPuzzlePieces[selectedPiece.Value], puzzlePieces[selectedPiece.Value]))
                 {
                     isMistake = false;
                     puzzleButtons[selectedPiece.Value].IsEnabled = false;
                     Score[0] += 6.25;
+                    trueCount++;
                 }
                 if (isMistake)
                 {
@@ -215,6 +258,7 @@ namespace SquarePuzzleGame_SchoolProject
                     Score[0] -= 6.25;
                 }
                 selectedPiece = null;
+                WinCondition();
             }
             else
             {

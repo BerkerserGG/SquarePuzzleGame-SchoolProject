@@ -15,6 +15,6 @@
     </UserControl.Resources>
     <StackPanel>
             <Button Content="Yeni Oyun" Style="{StaticResource mainMenuButton}" Click="NewGame_Button_Click" />
-            <Button Content="En Yüksek Skor" Style="{StaticResource mainMenuButton}"/>
+            <Button Content="En Yüksek Skor" Style="{StaticResource mainMenuButton}" Click="BestScore_Button_Click"/>
     </StackPanel>
 </UserControl>

@@ -19,6 +19,8 @@ namespace SquarePuzzleGame_SchoolProject
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public delegate void CreateNewGame();
+    public delegate void ReturnMainMenu();
+    public delegate void ShowBestScore();
     public partial class MainWindow : Window
     {
         private MainMenu mainUC = new MainMenu();
@@ -30,15 +32,30 @@ namespace SquarePuzzleGame_SchoolProject
             PlayerName = null;
             PuzzleImageURL = null;
             mainUC.NewGameEvent += OpenGameUC;
+            mainUC.BestScoreEvent += OpenBestScoreUC;
             MainContent.Content = mainUC;
         }
 
+        private void OpenBestScoreUC()
+        {
+            BestScoreUC bestScoreUC = new BestScoreUC();
+            bestScoreUC.BacktoMainMenu += GoToMainMenu; 
+            MainContent.Content = bestScoreUC;
+        }
         private void OpenGameUC()
         {
             GameUC gameUC = new GameUC();
+            gameUC.EndGameEvent += GoToMainMenu;
             gameUC.PlayerName.Add(PlayerName);
             gameUC.PuzzleImageURL = PuzzleImageURL;
             MainContent.Content = gameUC;
+        }
+
+        private void GoToMainMenu()
+        {
+            PlayerName = null;
+            PuzzleImageURL = null;
+            MainContent.Content = mainUC;
         }
     }
 }
